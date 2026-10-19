@@ -109,9 +109,9 @@ export default function SetupGuide() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                    <TableRow><TableCell>Flex offline</TableCell><TableCell><code className="font-mono text-xs">onDeviceDisconnected()</code> fires → Mini replies Fail</TableCell><TableCell>Register shows "Payment failed." Cashier can retry or use cash.</TableCell></TableRow>
+                    <TableRow><TableCell>Flex offline</TableCell><TableCell><code className="font-mono text-xs">onDeviceDisconnected()</code> fires → Mini replies Fail</TableCell><TableCell>Register shows &quot;Payment failed.&quot; Cashier can retry or use cash.</TableCell></TableRow>
                     <TableRow><TableCell>USB cable unplugged</TableCell><TableCell><code className="font-mono text-xs">onDeviceDisconnected()</code> fires on USB connector</TableCell><TableCell>Relay service remains alive; hot-plug cable to resume.</TableCell></TableRow>
-                    <TableRow><TableCell>Mini reboots</TableCell><TableCell>Auto-start via <code className="font-mono text-xs">BOOT_COMPLETED</code></TableCell><TableCell>"Pay Display Not Found"; reconnects in ~20s.</TableCell></TableRow>
+                    <TableRow><TableCell>Mini reboots</TableCell><TableCell>Auto-start via <code className="font-mono text-xs">BOOT_COMPLETED</code></TableCell><TableCell>&quot;Pay Display Not Found&quot;; reconnects in ~20s.</TableCell></TableRow>
                     <TableRow><TableCell>LAN outage</TableCell><TableCell>Same as Flex offline</TableCell><TableCell>Relay fails fast; no duplicate authorizations.</TableCell></TableRow>
                 </TableBody>
               </Table>

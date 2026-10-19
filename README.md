@@ -105,3 +105,10 @@ Ensure the Flex and Station are on the same Wi-Fi/LAN network.
 Verify that the Secure Network Pay Display app is running on the Flex and is on its "listening" screen.
 
 Check for any network firewalls that might be blocking communication on port 12345.
+
+CI
+Continuous integration is configured in `.github/workflows/ci.yml`. The workflow triggers on `pull_request` and `push` to `main`, running:
+- `npm ci`
+- `npm run typecheck`
+- `npm run lint`
+- `npm run build`
