@@ -108,36 +108,15 @@ Declined Payment: A card is declined on the Flex; the Register app returns to th
 Network Disconnection: The app gracefully handles cases where the Flex is unreachable (e.g., wrong IP, not on network, SNPD not running).
 
 5. CI Blueprint (GitHub Actions)
-Use this skeleton for any CI/CD workflows.
+The repository CI workflow is configured in `.github/workflows/ci.yml` and triggers on `push` and `pull_request` to `main`.
+Permissions: `contents: read`.
+Runner: `ubuntu-latest`.
 
-name: Android CI
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
-      - name: Build with Gradle
-        run: ./gradlew build
-      - name: Upload Debug APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+The workflow runs the following checks:
+- `npm ci`
+- `npm run typecheck`
+- `npm run lint`
+- `npm run build`
 
 6. Common Local Commands
 # Sideload the debug build
