@@ -12,13 +12,13 @@ export default function Resources() {
         <CardContent className="space-y-4">
           <Button asChild variant="secondary" className="w-full justify-between">
             <a href="#" target="_blank" rel="noopener noreferrer">
-              <span>clover-relay-mini.apk</span>
+              <span>AirBridge APK (latest release)</span>
               <Download />
             </a>
           </Button>
           <Button asChild variant="secondary" className="w-full justify-between">
             <a href="#" target="_blank" rel="noopener noreferrer">
-              <span>USB Pay Display (App Market)</span>
+              <span>Secure Network Pay Display (App Market)</span>
               <ExternalLink />
             </a>
           </Button>

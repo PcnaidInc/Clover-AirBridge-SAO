@@ -3,11 +3,11 @@
 ## Core Features:
 
 - Setup Guide: Displays a clear step-by-step guide for setting up the Clover AirBridge, referencing the original documentation.
-- Topology Diagram: Visual representation of the physical and network topology, as described in the Clover AirBridge documentation.
+- Topology Diagram: Visual representation of the physical and network topology — Station Solo communicating directly with a Clover Flex 4 over a local WSS connection (Station-as-Orchestrator architecture).
 - Configuration Checklist: Interactive checklist for device configuration, allowing users to track progress.
 - AI Troubleshooter: AI-powered troubleshooter to identify and resolve common issues during AirBridge setup, providing solutions based on the documentation. Acts as a tool to quickly identify resolutions.
 - Compliance Documentation: Link to the Clover SDK EULA and SNPD PCI-P2PE attestation for compliance evidence.
-- Download Links: Direct links to download the necessary APKs (clover-relay-mini.apk) and apps (USB Pay Display) from official sources.
+- Download Links: Direct links to download the necessary APKs and apps from official sources.
 
 ## Style Guidelines:
 
