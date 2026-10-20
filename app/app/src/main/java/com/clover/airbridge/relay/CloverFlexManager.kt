@@ -1,18 +1,26 @@
 package com.clover.airbridge.relay
 
 import android.content.Context
-import com.clover.connector.sdk.v3.CloverConnector
-import com.clover.connector.sdk.v3.DefaultCloverConnectorListener
-import com.clover.connector.sdk.v3.ICloverConnector
-import com.clover.remote.client.CloverDeviceConfiguration
-import com.clover.remote.client.transport.CloverTransport
-import com.clover.remote.client.transport.websocket.WebSocketCloverTransport
+import com.clover.remote.client.CloverConnector
+import com.clover.remote.client.DefaultCloverConnectorListener
+import com.clover.remote.client.ICloverConnector
+import com.clover.remote.client.MerchantInfo
+import com.clover.remote.client.WebSocketCloverDeviceConfiguration
+import com.clover.remote.client.messages.CloverDeviceErrorEvent
+import com.clover.remote.client.messages.ConfirmPaymentRequest
+import com.clover.remote.client.messages.ResultCode
 import com.clover.remote.client.messages.SaleRequest
 import com.clover.remote.client.messages.SaleResponse
-import com.clover.remote.client.MerchantInfo
-import com.clover.remote.client.messages.CloverDeviceErrorEvent
+import com.clover.remote.client.utils.WebSocketUtils
 import kotlinx.coroutines.CompletableDeferred
-import java.net.URI
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+/** Java-friendly completion callback for [CloverFlexManager.processPaymentAsync]. */
+fun interface SaleCallback {
+    fun onResult(response: SaleResponse)
+}
 
 class CloverFlexManager(context: Context) {
 
@@ -20,23 +28,17 @@ class CloverFlexManager(context: Context) {
     private var saleResponseDeferred: CompletableDeferred<SaleResponse>? = null
 
     init {
-        val config = object : CloverDeviceConfiguration {
-            override fun getCloverDeviceType(): CloverDeviceConfiguration.CloverDeviceType? = null
-            override fun getMessagePackageName(): String = "com.pcnaid.cloverairbridge"
-            override fun getName(): String = "Clover AirBridge"
-            override fun getSerial(): String = "AirBridge-POS-01"
-            override fun getCloverTransport(): CloverTransport {
-                val endpoint = "wss://${AppConstants.FLEX_IP_ADDRESS}:${AppConstants.FLEX_PORT}/remote_pay"
-                return WebSocketCloverTransport(URI.create(endpoint))
-            }
-
-            override fun getApplicationId(): String = AppConstants.REMOTE_APP_ID
-            override fun getPosName(): String? = null
-            override fun getHeartbeatInterval(): Long? = null
-            override fun getHeartbeatDisconnectTimeout(): Long? = null
-            override fun getReconnectDelay(): Long? = null
-            override fun getEnableLogging(): Boolean = true
-            override fun getMaxCharinMessage(): Int = 0
+        val endpoint = WebSocketUtils.createSecureURI(AppConstants.FLEX_IP_ADDRESS, AppConstants.FLEX_PORT.toString())
+        val config = object : WebSocketCloverDeviceConfiguration(
+            endpoint,
+            AppConstants.REMOTE_APP_ID,
+            null,
+            "Clover AirBridge",
+            "AirBridge-POS-01",
+            null
+        ) {
+            override fun onPairingCode(pairingCode: String?) {}
+            override fun onPairingSuccess(authToken: String?) {}
         }
         cloverConnector = CloverConnector(config)
         cloverConnector?.addCloverConnectorListener(CloverListener())
@@ -47,11 +49,18 @@ class CloverFlexManager(context: Context) {
         cloverConnector?.initializeConnection()
 
         val saleRequest = SaleRequest(amount, externalId)
-        saleRequest.disablePrinting = true
-        saleRequest.disableReceiptSelection = true
+        saleRequest.setDisablePrinting(true)
+        saleRequest.setDisableReceiptSelection(true)
 
         cloverConnector?.sale(saleRequest)
         return saleResponseDeferred!!.await()
+    }
+
+    /** Runs [processPayment] off the main thread and delivers the result to [callback] (not on the main thread). */
+    fun processPaymentAsync(amount: Long, externalId: String, callback: SaleCallback) {
+        CoroutineScope(Dispatchers.IO).launch {
+            callback.onResult(processPayment(amount, externalId))
+        }
     }
 
     fun dispose() {
@@ -64,13 +73,24 @@ class CloverFlexManager(context: Context) {
             saleResponseDeferred?.complete(response)
         }
 
+        // The device raises challenges (e.g. duplicate payment) for the merchant to confirm. This
+        // unattended relay has nobody to confirm, so reject on any challenge and accept otherwise.
+        override fun onConfirmPaymentRequest(request: ConfirmPaymentRequest) {
+            val challenge = request.challenges?.firstOrNull()
+            if (challenge != null) {
+                cloverConnector?.rejectPayment(request.payment, challenge)
+            } else {
+                cloverConnector?.acceptPayment(request.payment)
+            }
+        }
+
         override fun onDeviceReady(merchantInfo: MerchantInfo) {
             super.onDeviceReady(merchantInfo)
         }
 
         override fun onDeviceError(deviceErrorEvent: CloverDeviceErrorEvent) {
             super.onDeviceError(deviceErrorEvent)
-            val dummyResponse = SaleResponse(false, com.clover.remote.Result.FAIL)
+            val dummyResponse = SaleResponse(false, ResultCode.FAIL)
             dummyResponse.reason = "Device Error: ${deviceErrorEvent.message}"
             saleResponseDeferred?.complete(dummyResponse)
         }

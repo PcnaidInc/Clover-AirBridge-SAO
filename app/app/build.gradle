@@ -14,12 +14,13 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
+    namespace 'com.pcnaid.cloverairbridge'
     compileSdkVersion 34
     
     defaultConfig {
         applicationId "com.pcnaid.cloverairbridge" // Keeping the original package name
         minSdkVersion 29 // Targeting Clover Station Solo
-        targetSdkVersion 29
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -44,8 +45,11 @@ android {
 
     buildTypes {
         release {
-            // This tells the release build to use the signing config from above
-            signingConfig signingConfigs.release
+            // Sign with the keystore config above when keystore.properties exists; without it (CI) the
+            // release variant builds unsigned instead of failing on a missing storeFile.
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -71,10 +75,11 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     // Clover Android SDK for native integration (custom tender, order access)
-    implementation 'com.clover.sdk:clover-android-sdk:327'
+    implementation 'com.clover.sdk:clover-android-sdk:329'
 
     // Clover Remote Pay Android SDK for connecting to the Flex
-    implementation 'com.clover.sdk:remote-pay-android-connector:5.0.1'
+    implementation 'com.clover.sdk:remote-pay-android-connector:5.0.0'
+    implementation 'com.clover:clover-remote-interface:356'
 
     // Kotlin Coroutines for managing background tasks
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
