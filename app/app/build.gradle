@@ -45,8 +45,11 @@ android {
 
     buildTypes {
         release {
-            // This tells the release build to use the signing config from above
-            signingConfig signingConfigs.release
+            // Sign with the keystore config above when keystore.properties exists; without it (CI) the
+            // release variant builds unsigned instead of failing on a missing storeFile.
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -72,7 +75,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     // Clover Android SDK for native integration (custom tender, order access)
-    implementation 'com.clover.sdk:clover-android-sdk:328'
+    implementation 'com.clover.sdk:clover-android-sdk:329'
 
     // Clover Remote Pay Android SDK for connecting to the Flex
     implementation 'com.clover.sdk:remote-pay-android-connector:5.0.0'

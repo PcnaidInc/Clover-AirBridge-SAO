@@ -53,7 +53,7 @@ app/build.gradle Dependencies:
 Ensure the following dependencies are present:
 
 // For native integration and custom tender
-implementation 'com.clover.sdk:clover-android-sdk:328'
+implementation 'com.clover.sdk:clover-android-sdk:329'
 
 // For remote communication with Clover Flex
 implementation 'com.clover.sdk:remote-pay-android-connector:5.0.0'
@@ -62,8 +62,9 @@ implementation 'com.clover.sdk:remote-pay-android-connector:5.0.0'
 // remote-pay-android-connector:5.0.1 cannot be fetched. Maven Central returns 404 for
 // clover-android-sdk-327.pom and remote-pay-android-connector-5.0.1.pom; its metadata lists
 // clover-android-sdk 328-341 and remote-pay-android-connector 4.3.x-5.0.0 (5.0.1 was never published
-// there), and the former sdk.clover.com repository no longer resolves. 328 and 5.0.0 are the oldest
-// listed SDK build and the newest published connector, and the only repository is mavenCentral().
+// there), and the former sdk.clover.com repository no longer resolves. 5.0.0 is the newest published
+// connector and its POM declares clover-android-sdk:329 as a runtime dependency, so the SDK is declared
+// at 329 to keep the compiled and packaged versions identical. The only repository is mavenCentral().
 
 // For asynchronous operations
 implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
