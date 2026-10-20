@@ -80,9 +80,11 @@ public class PaymentRelayActivity extends AppCompatActivity {
                             showError("Payment confirmation had no captured amount. Check the Flex device before retrying.");
                             finishWithResult(Activity.RESULT_CANCELED);
                         } else if (paid < amount) {
-                            recordExternalPayment(orderId, paid);
+                            // The customer has been charged `paid`. Hand exactly that amount back as the
+                            // custom-tender result so Register records a partial tender and leaves the
+                            // balance open; cancelling would let the full balance be charged again.
                             showError("Partial payment captured: " + paid + " of " + amount + ". The balance is still due.");
-                            finishWithResult(Activity.RESULT_CANCELED);
+                            finishWithTenderResult(paid, externalPaymentId);
                         } else {
                             recordExternalPayment(orderId, amount);
                             finishWithResult(Activity.RESULT_OK);
@@ -123,6 +125,14 @@ public class PaymentRelayActivity extends AppCompatActivity {
 
     private void showError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    private void finishWithTenderResult(long capturedAmount, String clientId) {
+        Intent data = new Intent();
+        data.putExtra(Intents.EXTRA_AMOUNT, capturedAmount);
+        data.putExtra(Intents.EXTRA_CLIENT_ID, clientId);
+        setResult(Activity.RESULT_OK, data);
+        finish();
     }
 
     private void finishWithResult(int resultCode) {

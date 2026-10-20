@@ -94,7 +94,7 @@ Complete the payment on the Flex using a test card (dip, tap, or swipe).
 
 Once the payment is approved on the Flex, the AirBridge app on the Station will close, and you will be returned to the Register app's receipt screen, with the order marked as paid.
 
-If the Flex captures less than the order total (a partial authorization), AirBridge records only the captured amount as an external payment, shows the amount still due, and returns a cancelled result so Register does not mark the order paid. A success response with no captured amount is treated as a failure and the order stays open.
+If the Flex captures less than the order total (a partial authorization), AirBridge returns the captured amount (and the client id) as the custom-tender result with `RESULT_OK`, so Register records a partial tender and leaves the balance due, and it shows the amount still due. A success response with no captured amount is treated as a failure and the order stays open.
 
 Troubleshooting
 "Pay on Flex" button is missing: The AirBridge app is likely not installed correctly on the Station Solo, or the AndroidManifest.xml intent filter is incorrect. Verify the installation via adb shell pm list packages.
