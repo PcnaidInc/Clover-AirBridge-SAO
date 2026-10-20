@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.clover.sdk.v1.Intents;
 import com.clover.sdk.v3.order.Order;
 import com.clover.sdk.v3.order.OrderConnector;
+import com.clover.sdk.v3.payments.Payment;
 import com.pcnaid.cloverairbridge.databinding.ActivityPaymentRelayBinding;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -70,8 +71,22 @@ public class PaymentRelayActivity extends AppCompatActivity {
             cloverFlexManager.processPaymentAsync(amount, externalPaymentId, response ->
                 runOnUiThread(() -> {
                     if (response.isSuccess()) {
-                        recordExternalPayment(orderId, amount);
-                        finishWithResult(Activity.RESULT_OK);
+                        // A partial authorization is a success response whose payment is smaller than
+                        // the order total; completing the order on the requested amount would mark it
+                        // fully paid. Record only what was captured and leave the order open.
+                        Payment payment = response.getPayment();
+                        Long paid = payment == null ? null : payment.getAmount();
+                        if (paid == null || paid <= 0) {
+                            showError("Payment confirmation had no captured amount. Check the Flex device before retrying.");
+                            finishWithResult(Activity.RESULT_CANCELED);
+                        } else if (paid < amount) {
+                            recordExternalPayment(orderId, paid);
+                            showError("Partial payment captured: " + paid + " of " + amount + ". The balance is still due.");
+                            finishWithResult(Activity.RESULT_CANCELED);
+                        } else {
+                            recordExternalPayment(orderId, amount);
+                            finishWithResult(Activity.RESULT_OK);
+                        }
                     } else {
                         showError("Payment Failed: " + response.getReason());
                         finishWithResult(Activity.RESULT_CANCELED);
