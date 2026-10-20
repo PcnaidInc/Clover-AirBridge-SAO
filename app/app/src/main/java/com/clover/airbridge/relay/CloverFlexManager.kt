@@ -7,6 +7,7 @@ import com.clover.remote.client.ICloverConnector
 import com.clover.remote.client.MerchantInfo
 import com.clover.remote.client.WebSocketCloverDeviceConfiguration
 import com.clover.remote.client.messages.CloverDeviceErrorEvent
+import com.clover.remote.client.messages.ConfirmPaymentRequest
 import com.clover.remote.client.messages.ResultCode
 import com.clover.remote.client.messages.SaleRequest
 import com.clover.remote.client.messages.SaleResponse
@@ -55,6 +56,17 @@ class CloverFlexManager(context: Context) {
         override fun onSaleResponse(response: SaleResponse) {
             super.onSaleResponse(response)
             saleResponseDeferred?.complete(response)
+        }
+
+        // The device raises challenges (e.g. duplicate payment) for the merchant to confirm. This
+        // unattended relay has nobody to confirm, so reject on any challenge and accept otherwise.
+        override fun onConfirmPaymentRequest(request: ConfirmPaymentRequest) {
+            val challenge = request.challenges?.firstOrNull()
+            if (challenge != null) {
+                cloverConnector?.rejectPayment(request.payment, challenge)
+            } else {
+                cloverConnector?.acceptPayment(request.payment)
+            }
         }
 
         override fun onDeviceReady(merchantInfo: MerchantInfo) {
