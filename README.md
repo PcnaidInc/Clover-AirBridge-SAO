@@ -6,9 +6,10 @@ Clover AirBridge: Station-to-Flex Payment Orchestrator
 
 This project runs the following checks on every pull request and on push to `main`, via the `.github/workflows/ci.yml` workflow:
 
-- `npm run lint` — ESLint via Next.js
 - `npm run typecheck` — TypeScript type checking (`tsc --noEmit`)
 - `npm run build` — Production build (`next build`)
+- `android-build` — Gradle debug build of the Android app (`app/`)
+
 This repository contains the source code for the Clover AirBridge, an Android application that enables a Clover Station Solo to initiate and orchestrate payments on a separate Clover Flex 4 device over a local network.
 
 Overview
