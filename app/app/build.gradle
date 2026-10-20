@@ -72,10 +72,10 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     // Clover Android SDK for native integration (custom tender, order access)
-    implementation 'com.clover.sdk:clover-android-sdk:327'
+    implementation 'com.clover.sdk:clover-android-sdk:328'
 
     // Clover Remote Pay Android SDK for connecting to the Flex
-    implementation 'com.clover.sdk:remote-pay-android-connector:5.0.1'
+    implementation 'com.clover.sdk:remote-pay-android-connector:5.0.0'
 
     // Kotlin Coroutines for managing background tasks
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
