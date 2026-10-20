@@ -43,7 +43,19 @@ Based on the SaleResponse from the Flex, it sets its own result (Activity.RESULT
 2. Environment & Build Configuration
 Target Device: Clover Station Solo
 
-Target Android API Level: 29 (minSdkVersion)
+Target Android API Level: minSdkVersion 29, targetSdkVersion 34 (compileSdkVersion 34)
+
+targetSdkVersion note (2026-10-20): the target was raised from 29 to 34 because the CI `./gradlew build`
+runs lint, whose `ExpiredTargetSdkVersion` error fails the build at 29. It is not suppressed. Behaviour
+gated on targetSdk applies only on a device whose own Android API level is at or above that gate, so on
+minSdk-era Clover hardware the bump mostly compiles in stricter checks (explicit `android:exported`,
+PendingIntent mutability). A green `./gradlew build` shows those compile; it is not a runtime test. The
+owner's manual device pass on a Station Solo and Flex stays the final gate for runtime behaviour.
+
+Manifest note (2026-10-20): lint `MissingClass` caught that `AndroidManifest.xml` registered
+`.relay.PaymentRelayActivity`, which resolves under the `com.pcnaid.cloverairbridge` namespace, while the
+class lives in `com.clover.airbridge.relay`. The activity would have failed to launch. It is registered by
+its fully qualified name; keep it that way unless the source package moves.
 
 Language: Kotlin
 
