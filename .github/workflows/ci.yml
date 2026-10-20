@@ -45,5 +45,7 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: gradle
-      - run: chmod +x ./app/gradlew
-      - run: ./app/gradlew :app:assembleDebug
+      - run: chmod +x ./gradlew
+        working-directory: app
+      - run: ./gradlew :app:assembleDebug
+        working-directory: app
