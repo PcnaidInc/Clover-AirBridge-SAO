@@ -76,6 +76,7 @@ dependencies {
 
     // Clover Remote Pay Android SDK for connecting to the Flex
     implementation 'com.clover.sdk:remote-pay-android-connector:5.0.0'
+    implementation 'com.clover:clover-remote-interface:356'
 
     // Kotlin Coroutines for managing background tasks
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
