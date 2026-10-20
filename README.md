@@ -116,3 +116,13 @@ Ensure the Flex and Station are on the same Wi-Fi/LAN network.
 Verify that the Secure Network Pay Display app is running on the Flex and is on its "listening" screen.
 
 Check for any network firewalls that might be blocking communication on port 12345.
+
+## Dependabot auto-merge
+
+`.github/workflows/dependabot-auto.yml` runs after the `CI` workflow finishes on a Dependabot pull request.
+
+- A patch or minor bump is squash-merged only when `CI` succeeded on that exact head SHA and no other check on the head failed.
+- A major bump whose `CI` run failed is closed with a comment, but only while `CI` on the default branch is green; Dependabot treats a closed pull request as ignoring that version.
+- A green major bump, a pull request without Dependabot's update-type metadata, and a stale head are left for a human.
+
+The workflow uses `workflow_run` instead of `gh pr merge --auto` because this repository has no required status checks, so `--auto` would merge at once with no gate.
