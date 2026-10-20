@@ -16,7 +16,7 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
         <activity
-            android:name=".relay.PaymentRelayActivity"
+            android:name="com.clover.airbridge.relay.PaymentRelayActivity"
             android:exported="true"
             android:label="@string/Pay_on_Flex">
             <intent-filter>
