@@ -6,15 +6,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
 const stationTasks = [
-  "Install USB Pay Display (from Clover App Market).",
-  "Leave Register in Demo mode (sale requests are still emitted)."
-];
-
-const miniTasks = [
-  "Enable Developer Mode & Allow Unknown APKs.",
-  "Install clover-relay-mini.apk.",
-  "On first launch, enter Flex IP and tap 'Start relay'.",
-  "Grant the runtime permission prompt for USB accessory."
+  "Install the AirBridge app from the Clover App Market.",
+  "Open AppConstants.kt and set the Flex IP address and Remote App ID.",
+  "Build and sideload the app onto the Station Solo."
 ];
 
 const flexTasks = [
@@ -52,23 +46,6 @@ export default function Checklist() {
               label={task}
               checked={!!checkedState[`station-${index}`]}
               onCheckedChange={() => handleCheckedChange(`station-${index}`)}
-            />
-          ))}
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Mini Dev Kit (Relay)</CardTitle>
-          <CardDescription>Setup tasks for the AirBridge relay device.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {miniTasks.map((task, index) => (
-            <TaskItem
-              key={`mini-${index}`}
-              id={`mini-${index}`}
-              label={task}
-              checked={!!checkedState[`mini-${index}`]}
-              onCheckedChange={() => handleCheckedChange(`mini-${index}`)}
             />
           ))}
         </CardContent>

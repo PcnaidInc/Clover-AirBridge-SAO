@@ -1,6 +1,6 @@
 
 AGENTS.md – Project Guide for AI Coding Assistants (Clover AirBridge)
-Last updated: 2025-06-28
+Last updated: 2026-10-20
 
 0. Mission
 Your primary mission is to build and maintain the Clover AirBridge Android application. This app transforms a Clover Station Solo into a payment orchestrator, enabling it to initiate transactions that are completed on a separate Clover Flex 4 device over a local network.
@@ -14,7 +14,7 @@ The application is a native Android app that leverages two distinct Clover SDKs.
 
 Custom Tender (Clover Android SDK):
 
-The app registers an <activity> in AndroidManifest.xml with an <intent-filter> for the clover.intent.action.PAY action. This makes it appear as a custom payment tender in the Clover Register app.
+The app registers an <activity> in AndroidManifest.xml with <intent-filter> entries for the clover.intent.action.MERCHANT_TENDER and clover.intent.action.Pay actions. This makes it appear as a custom payment tender in the Clover Register app.
 
 When launched, this activity receives the orderId via the Intent extras.
 
@@ -30,11 +30,11 @@ It creates and sends a SaleRequest containing the order total to the Flex.
 
 It listens for the SaleResponse using an ICloverConnectorListener implementation.
 
-Workflow Orchestration (PaymentRelayActivity.kt):
+Workflow Orchestration (PaymentRelayActivity.java):
 
 This is the central component that ties the two SDKs together.
 
-It is launched by the PAY intent.
+It is launched by the MERCHANT_TENDER or PAY intent (the manifest registers both).
 
 It uses a CloverFlexManager helper class to handle the complexities of the remote connection.
 
@@ -70,6 +70,9 @@ implementation 'com.clover.sdk:clover-android-sdk:329'
 // For remote communication with Clover Flex
 implementation 'com.clover.sdk:remote-pay-android-connector:5.0.0'
 
+// Transitive interface types pulled in by remote-pay-android-connector:5.0.0
+implementation 'com.clover:clover-remote-interface:356'
+
 // Baseline note (2026-10-20): the originally specified clover-android-sdk:327 and
 // remote-pay-android-connector:5.0.1 cannot be fetched. Maven Central returns 404 for
 // clover-android-sdk-327.pom and remote-pay-android-connector-5.0.1.pom; its metadata lists
@@ -90,7 +93,7 @@ Order Total Retrieval: Use the OrderConnector to fetch the Order object. The ord
 RAID Configuration: The CloverConnector must be initialized with the correct Remote App ID (RAID). This ID is generated in the Developer Dashboard and must be stored securely or as a build constant. For example, in AppConstants.kt:
 const val REMOTE_APP_ID = "YOUR_REMOTE_APP_ID_HERE"
 
-Flex Connection: The WebSocketCloverTransport must be configured with the correct IP address and port of the Clover Flex running the SNPD app. This should be made configurable for the merchant.
+Flex Connection: The WebSocketCloverDeviceConfiguration must be configured with the correct IP address and port of the Clover Flex running the SNPD app. This should be made configurable for the merchant.
 
 External Payment ID: Every SaleRequest sent to the Flex must have a unique externalId (UUID.randomUUID().toString()). This is critical for transaction tracking and reconciliation.
 
