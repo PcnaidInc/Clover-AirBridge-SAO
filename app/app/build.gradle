@@ -20,7 +20,7 @@ android {
     defaultConfig {
         applicationId "com.pcnaid.cloverairbridge" // Keeping the original package name
         minSdkVersion 29 // Targeting Clover Station Solo
-        targetSdkVersion 29
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
