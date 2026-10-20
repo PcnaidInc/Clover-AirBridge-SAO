@@ -13,6 +13,14 @@ import com.clover.remote.client.messages.SaleRequest
 import com.clover.remote.client.messages.SaleResponse
 import com.clover.remote.client.utils.WebSocketUtils
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+/** Java-friendly completion callback for [CloverFlexManager.processPaymentAsync]. */
+fun interface SaleCallback {
+    fun onResult(response: SaleResponse)
+}
 
 class CloverFlexManager(context: Context) {
 
@@ -46,6 +54,13 @@ class CloverFlexManager(context: Context) {
 
         cloverConnector?.sale(saleRequest)
         return saleResponseDeferred!!.await()
+    }
+
+    /** Runs [processPayment] off the main thread and delivers the result to [callback] (not on the main thread). */
+    fun processPaymentAsync(amount: Long, externalId: String, callback: SaleCallback) {
+        CoroutineScope(Dispatchers.IO).launch {
+            callback.onResult(processPayment(amount, externalId))
+        }
     }
 
     fun dispose() {
