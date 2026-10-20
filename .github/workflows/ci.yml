@@ -47,5 +47,5 @@ jobs:
           cache: gradle
       - run: chmod +x ./gradlew
         working-directory: app
-      - run: ./gradlew :app:assembleDebug
+      - run: ./gradlew build
         working-directory: app

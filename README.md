@@ -8,7 +8,7 @@ This project runs the following checks on every pull request and on push to `mai
 
 - `npm run typecheck` — TypeScript type checking (`tsc --noEmit`)
 - `npm run build` — Production build (`next build`)
-- `android-build` — Gradle debug build of the Android app (`app/`)
+- `android-build` — `./gradlew build` of the Android app (`app/`): compile, lint and tests for every variant (release builds unsigned in CI)
 
 This repository contains the source code for the Clover AirBridge, an Android application that enables a Clover Station Solo to initiate and orchestrate payments on a separate Clover Flex 4 device over a local network.
 
