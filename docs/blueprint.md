@@ -7,7 +7,7 @@
 - Configuration Checklist: Interactive checklist for device configuration, allowing users to track progress.
 - AI Troubleshooter: AI-powered troubleshooter to identify and resolve common issues during AirBridge setup, providing solutions based on the documentation. Acts as a tool to quickly identify resolutions.
 - Compliance Documentation: Link to the Clover SDK EULA and SNPD PCI-P2PE attestation for compliance evidence.
-- Download Links: Direct links to download the necessary APKs (clover-relay-mini.apk) and apps (USB Pay Display) from official sources.
+- Resources & Downloads: Links to official Clover resources and compliance documents used by AirBridge (Secure Network Pay Display, Clover SDK EULA, SNPD PCI-P2PE attestation).
 
 ## Style Guidelines:
 

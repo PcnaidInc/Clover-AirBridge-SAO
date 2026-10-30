@@ -1,6 +1,6 @@
 
 AGENTS.md – Project Guide for AI Coding Assistants (Clover AirBridge)
-Last updated: 2025-06-28
+Last updated: 2026-10-30
 
 0. Mission
 Your primary mission is to build and maintain the Clover AirBridge Android application. This app transforms a Clover Station Solo into a payment orchestrator, enabling it to initiate transactions that are completed on a separate Clover Flex 4 device over a local network.
@@ -30,7 +30,7 @@ It creates and sends a SaleRequest containing the order total to the Flex.
 
 It listens for the SaleResponse using an ICloverConnectorListener implementation.
 
-Workflow Orchestration (PaymentRelayActivity.kt):
+Workflow Orchestration (PaymentRelayActivity.java):
 
 This is the central component that ties the two SDKs together.
 
@@ -61,7 +61,7 @@ Language: Kotlin
 
 Build Tool: Gradle
 
-app/build.gradle Dependencies:
+Android app module (`app/app/build.gradle`) Dependencies:
 Ensure the following dependencies are present:
 
 // For native integration and custom tender
@@ -69,6 +69,9 @@ implementation 'com.clover.sdk:clover-android-sdk:329'
 
 // For remote communication with Clover Flex
 implementation 'com.clover.sdk:remote-pay-android-connector:5.0.0'
+
+// Required by connector 5.0.0 for compile-time types such as Challenge
+implementation 'com.clover:clover-remote-interface:356'
 
 // Baseline note (2026-10-20): the originally specified clover-android-sdk:327 and
 // remote-pay-android-connector:5.0.1 cannot be fetched. Maven Central returns 404 for
@@ -127,37 +130,60 @@ Declined Payment: A card is declined on the Flex; the Register app returns to th
 
 Network Disconnection: The app gracefully handles cases where the Flex is unreachable (e.g., wrong IP, not on network, SNPD not running).
 
-5. CI Blueprint (GitHub Actions)
-Use this skeleton for any CI/CD workflows.
+5. CI Workflow (`.github/workflows/ci.yml`)
+The repository currently uses the following least-privilege workflow. It runs on every pull request and on every push to `main` with read-only repository permissions.
 
-name: Android CI
+name: CI
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
-    branches: [ main ]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
+  typecheck:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          distribution: 'temurin'
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run typecheck
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [typecheck]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+
+  android-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
           java-version: '17'
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
-      - name: Build with Gradle
-        run: ./gradlew build
-      - name: Upload Debug APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          cache: gradle
+      - run: chmod +x ./gradlew
+        working-directory: app
+      - run: ./gradlew build
+        working-directory: app
 
 6. Common Local Commands
 # Sideload the debug build
