@@ -92,7 +92,7 @@ The screen on the Clover Flex 4 will activate and display the total order amount
 
 Complete the payment on the Flex using a test card (dip, tap, or swipe).
 
-Once the payment is approved on the Flex, the AirBridge app on the Station will close, and you will be returned to the Register app's receipt screen, with the order marked as paid.
+Once the payment is approved on the Flex, the AirBridge app on the Station will close, and you will be returned to the Register app's receipt screen, with the order marked as paid. AirBridge returns the paid amount and client id as the custom-tender result with `RESULT_OK`.
 
 If the Flex captures less than the order total (a partial authorization), AirBridge returns the captured amount (and the client id) as the custom-tender result with `RESULT_OK`, so Register records a partial tender and leaves the balance due, and it shows the amount still due. A success response with no captured amount is treated as a failure and the order stays open.
 

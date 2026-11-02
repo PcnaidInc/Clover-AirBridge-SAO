@@ -99,7 +99,7 @@ External Payment ID: Every SaleRequest sent to the Flex must have a unique exter
 
 Response Handling: The onSaleResponse callback is the single source of truth for the transaction outcome.
 
-If response.isSuccess() is true, the payment was successful. The app must call setResult(Activity.RESULT_OK) before finishing.
+If response.isSuccess() is true, the payment was successful. The app must call setResult(Activity.RESULT_OK, Intent) with Intents.EXTRA_AMOUNT and Intents.EXTRA_CLIENT_ID populated before finishing.
 
 If response.isSuccess() is false, the payment failed or was canceled. The response.reason should be logged or displayed. The app must call setResult(Activity.RESULT_CANCELED) before finishing.
 
