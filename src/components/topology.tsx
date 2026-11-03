@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tablet, Server, Smartphone, Usb, Wifi, ArrowRight } from "lucide-react";
+import { Tablet, Smartphone, Wifi, ArrowRight } from "lucide-react";
 
 const DeviceCard = ({ icon, title, description, connections }: { icon: React.ReactNode, title: string, description: string, connections: React.ReactNode }) => (
   <Card className="flex-1 text-center shadow-lg hover:shadow-xl transition-shadow duration-300 w-full md:w-auto">
@@ -38,26 +38,12 @@ export default function Topology() {
         <DeviceCard
           icon={<Tablet className="w-10 h-10 text-accent" />}
           title="Clover Station Solo"
-          description="POS UI, order entry, prints receipt."
+          description="POS UI, order entry, hosts AirBridge app as a custom tender."
           connections={
             <div className="flex items-center gap-2"><Wifi className="w-4 h-4"/> LAN</div>
           }
         />
 
-        <Connection
-          icon={<Usb className="w-6 h-6" />}
-          label="USB"
-        />
-
-        <DeviceCard
-          icon={<Server className="w-10 h-10 text-accent" />}
-          title="Clover Mini Dev Kit"
-          description="Hosts AirBridge APK, acts as protocol translator."
-          connections={
-             <div className="flex items-center gap-2"><Wifi className="w-4 h-4"/> LAN</div>
-          }
-        />
-        
         <Connection
           icon={<Wifi className="w-6 h-6" />}
           label="WSS"
@@ -72,7 +58,7 @@ export default function Topology() {
           }
         />
       </div>
-      <p className="text-center mt-6 text-muted-foreground text-sm">All three devices must be on the same local area network (e.g., store Wi-Fi).</p>
+      <p className="text-center mt-6 text-muted-foreground text-sm">Both devices must be on the same local area network (e.g., store Wi-Fi). The AirBridge app on the Station Solo communicates directly with the Flex via WSS.</p>
     </div>
   );
 }

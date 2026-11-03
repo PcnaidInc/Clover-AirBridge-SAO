@@ -87,7 +87,7 @@ public class PaymentRelayActivity extends AppCompatActivity {
                             finishWithTenderResult(paid, externalPaymentId);
                         } else {
                             recordExternalPayment(orderId, amount);
-                            finishWithResult(Activity.RESULT_OK);
+                            finishWithTenderResult(amount, externalPaymentId);
                         }
                     } else {
                         showError("Payment Failed: " + response.getReason());
@@ -128,11 +128,16 @@ public class PaymentRelayActivity extends AppCompatActivity {
     }
 
     private void finishWithTenderResult(long capturedAmount, String clientId) {
+        setResult(Activity.RESULT_OK, createTenderResultIntent(capturedAmount, clientId));
+        finish();
+    }
+
+    /** Builds the custom-tender result {@link Intent} that Clover Register expects. */
+    static Intent createTenderResultIntent(long capturedAmount, String clientId) {
         Intent data = new Intent();
         data.putExtra(Intents.EXTRA_AMOUNT, capturedAmount);
         data.putExtra(Intents.EXTRA_CLIENT_ID, clientId);
-        setResult(Activity.RESULT_OK, data);
-        finish();
+        return data;
     }
 
     private void finishWithResult(int resultCode) {

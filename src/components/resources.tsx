@@ -12,7 +12,7 @@ export default function Resources() {
         <CardContent className="space-y-4">
           <Button asChild variant="secondary" className="w-full justify-between">
             <a href="#" target="_blank" rel="noopener noreferrer">
-              <span>Clover AirBridge Android app</span>
+              <span>AirBridge APK (latest release)</span>
               <Download />
             </a>
           </Button>
