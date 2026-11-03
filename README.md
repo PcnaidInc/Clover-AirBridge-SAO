@@ -10,7 +10,7 @@ This project runs the following checks on every pull request and on push to `mai
 - `npm run build` — Production build (`next build`)
 - `android-build` — `./gradlew build` of the Android app (`app/`): compile, lint and tests for every variant (release builds unsigned in CI)
 
-This repository contains the source code for the Clover AirBridge, an Android application that enables a Clover Station Solo to initiate and orchestrate payments on a separate Clover Flex 4 device over a local network.
+This repository contains the source code for the Clover AirBridge. The primary deliverable is an Android application (`app/`) that enables a Clover Station Solo to initiate and orchestrate payments on a separate Clover Flex 4 device over a local network. The repository also ships a Next.js web assistant (`src/`, described in `docs/blueprint.md`) that documents the AirBridge setup and provides an AI troubleshooter.
 
 Overview
 The purpose of this application is to allow a merchant to use a Clover Station Solo as their primary point-of-sale (POS) for order management, and then seamlessly hand off the payment process to a customer-facing Clover Flex.
@@ -71,7 +71,7 @@ Navigate to the file AppConstants.kt.
 
 Paste the RAID you copied from the Developer Dashboard into the REMOTE_APP_ID constant.
 
-Update the FLEX_IP_ADDRESS constant with the IP address of your Clover Flex 4.
+Update the FLEX_IP_ADDRESS constant with the IP address of your Clover Flex 4. If the Flex SNPD is not listening on the default port 12345, update FLEX_PORT as well.
 
 Build a signed release APK of the application.
 
